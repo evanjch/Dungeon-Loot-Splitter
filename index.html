@@ -14,16 +14,19 @@
     <h1>Dungeon Loot Splitter</h1>
 </header>
 
-
 <main>
 
+    <!--Party Setup-->
     <section class="panel">
         <h2>Party Setup</h2>
+
         <label for="partySize">Number of Party Members:</label>
-        <input type="number" id="partySize" min="1">
+        <input type="number" id="partySize" min="1" step="1">
+
         <p id="partyError" class="error"></p>
     </section>
 
+    <!--Add Loot-->
     <section class="panel">
         <h2>Add Loot</h2>
 
@@ -31,40 +34,57 @@
         <input type="text" id="lootName">
 
         <label for="lootValue">Loot Value:</label>
-        <input type="number" id="lootValue" step="0.01" min="0">
+        <input type="number" id="lootValue" min="0" step="0.01">
+
+        <label for="lootQuantity">Quantity:</label>
+        <input type="number" id="lootQuantity" min="1" step="1">
 
         <button id="addLootBtn">Add Loot</button>
+
         <p id="lootError" class="error"></p>
     </section>
 
+    <!--Loot List-->
     <section class="panel">
         <h2>Loot List</h2>
-        <ul id="lootList"></ul>
-        <p><strong>Total Loot:</strong> $<span id="runningTotal">0.00</span></p>
+
+        <div id="noLootMessage">No loot added.</div>
+
+        <div class="loot-table">
+            <div class="loot-header">Name</div>
+            <div class="loot-header">Value</div>
+            <div class="loot-header">Quantity</div>
+            <div class="loot-header">Remove</div>
+
+            <div id="lootRows"></div>
+        </div>
+
+        <div id="totalSection" class="total-row hidden">
+            Total Loot: $<span id="runningTotal">0.00</span>
+        </div>
     </section>
 
+    <!--Split Loot-->
     <section class="panel">
         <h2>Split Loot</h2>
 
-        <button id="splitLootBtn">Split Loot</button>
+        <button id="splitLootBtn" disabled>Split Loot</button>
 
-        <div id="results">
+        <div id="results" class="hidden">
             <p><strong>Total Loot:</strong> $<span id="finalTotal">0.00</span></p>
             <p><strong>Loot Per Party Member:</strong> $<span id="perMember">0.00</span></p>
         </div>
 
         <p id="splitError" class="error"></p>
     </section>
-
+ 
     <section class="panel reflection">
         <h2>Logic Explanation</h2>
         <p>
-            The application uses an array to store all the loot items. Each item is saved as an object with a name and value. A for loop is used to go through the array to calculate the total loot and to display each item in the loot list. If statements then check that the party size is valid, the loot name is not empty, and the loot value is not negative before adding it or splitting the loot.
-        </p>
+            The lootArray is the source of truth because it stores all of the loot data, including the quantity, name, and value. When there are changes to loot or the party size, the updateUI() recalculates the totals and updates the screen. The conditional logic stops invalid data from showing and also controls when to show results or the Split button.
     </section>
 
 </main>
-
 
 <script src="js/script.js"></script>
 </body>
