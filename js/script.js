@@ -1,12 +1,99 @@
+// Storage
+const STORAGE_KEY = "lootSplitterState";
+
 // Application State
 let lootArray = [];
+let partySize = 1;
 
 // Event Listeners
 document.getElementById("addLootBtn").addEventListener("click", addLoot);
-document.getElementById("splitLootBtn").addEventListener("click", function () {
+document.getElementById("splitLootBtn").addEventListener("click", updateUI);
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+document.getElementById("partySize").addEventListener("input", function () {
+
+    const value = parseInt(this.value);
+
+    if (!isNaN(value) && value >= 1) {
+        partySize = value;
+        saveState();
+    }
+
     updateUI();
 });
-document.getElementById("partySize").addEventListener("input", updateUI);
+
+// Save State
+function saveState() {
+
+    const state = {
+        loot: lootArray,
+        partySize: partySize
+    };
+
+    const stateString = JSON.stringify(state);
+
+    localStorage.setItem(STORAGE_KEY, stateString);
+}
+
+// Restore State
+function restoreState() {
+
+    const saved = localStorage.getItem(STORAGE_KEY);
+
+    if (!saved) return;
+
+    try {
+
+        const parsed = JSON.parse(saved);
+
+        if (typeof parsed !== "object") return;
+
+        if (Array.isArray(parsed.loot)) {
+
+            for (let i = 0; i < parsed.loot.length; i++) {
+
+                const item = parsed.loot[i];
+
+                if (
+                    item.name &&
+                    typeof item.name === "string" &&
+                    item.name.trim() !== "" &&
+                    typeof item.value === "number" &&
+                    item.value >= 0 &&
+                    typeof item.quantity === "number" &&
+                    item.quantity >= 1
+                ) {
+                    lootArray.push(item);
+                }
+            }
+        }
+
+        if (typeof parsed.partySize === "number" && parsed.partySize >= 1) {
+            partySize = parsed.partySize;
+            document.getElementById("partySize").value = partySize;
+        }
+
+    } catch (error) {
+
+        lootArray = [];
+        partySize = 1;
+
+    }
+}
+
+// Reset All
+function resetAll() {
+
+    lootArray = [];
+    partySize = 1;
+
+    document.getElementById("partySize").value = 1;
+
+    localStorage.removeItem(STORAGE_KEY);
+
+    updateUI();
+}
+
 
 // Add Loot
 function addLoot() {
@@ -44,6 +131,8 @@ function addLoot() {
         quantity: quantity
     });
 
+    saveState();
+
     nameInput.value = "";
     valueInput.value = "";
     quantityInput.value = "";
@@ -55,6 +144,7 @@ function addLoot() {
 // Remove Loot
 function removeLoot(index) {
     lootArray.splice(index, 1);
+    saveState();
     updateUI();
 }
 
@@ -78,7 +168,11 @@ function updateUI() {
     partyError.textContent = "";
     splitError.textContent = "";
 
-    const partySize = parseInt(partySizeInput.value);
+    const partyValue = parseInt(partySizeInput.value);
+
+    if(!isNaN(partyValue) && partyValue >= 1) {
+        partySize = partyValue;
+    }
 
     // Calculate total
     let total = 0;
@@ -160,3 +254,8 @@ function updateUI() {
         splitButton.disabled = true;
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    restoreState();
+    updateUI();
+}); 
