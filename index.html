@@ -23,8 +23,6 @@
         <label for="partySize">Number of Party Members:</label>
         <input type="number" id="partySize" min="1" step="1">
 
-        <button id="resetBtn">Reset All</button>
-
         <p id="partyError" class="error"></p>
     </section>
 
@@ -57,8 +55,9 @@
             <div class="loot-header">Value</div>
             <div class="loot-header">Quantity</div>
             <div class="loot-header">Remove</div>
-        </div>
+
             <div id="lootRows"></div>
+        </div>
 
         <div id="totalSection" class="total-row hidden">
             Total Loot: $<span id="runningTotal">0.00</span>
@@ -79,12 +78,10 @@
         <p id="splitError" class="error"></p>
     </section>
  
-    <!--Reflection Paragraph-->
     <section class="panel reflection">
         <h2>Logic Explanation</h2>
         <p>
             The lootArray is the source of truth because it stores all of the loot data, including the quantity, name, and value. When there are changes to loot or the party size, the updateUI() recalculates the totals and updates the screen. The conditional logic stops invalid data from showing and also controls when to show results or the Split button.
-        </p>
     </section>
 
 </main>
